@@ -96,6 +96,9 @@ const Ketcher3D: FC<IProps> = (props) => {
         })
         if (window.miew.init()) {
             window.miew.run()
+            setTimeout(() => {
+                preview3D(props.molStr)
+            }, 200)
         }
     }, [props.molStr])
 
