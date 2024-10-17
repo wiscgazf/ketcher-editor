@@ -1,0 +1,15 @@
+.preview-3d-wrapper {
+  height: 100%;
+  position: relative;
+
+  .preview-3d {
+    height: 100%;
+  }
+
+  .btm-btns {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+  }
+}

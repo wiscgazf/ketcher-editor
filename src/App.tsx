@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect} from 'react'
+import {ConfigProvider} from 'antd'
+import KetcherMain from './components/KetchEditor'
+import './App.css'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    /**
+     * 定义化学编辑器字体相关 源码是通过enum映射+toLowerCase,
+     * 无法通过替换字符改成中文 影响太大，
+     * 解决方案：
+     * 1、定义全局映射
+     * 2、在指定源码进行替换
+     * */
+    useEffect(() => {
+        window.jbyFonts = {
+            BOLD: '加粗',
+            ITALIC: '斜体',
+            SUBSCRIPT: '上标',
+            SUPERSCRIPT: '下标'
+        }
+    }, [])
+    return (
+        <ConfigProvider theme={{token: {colorPrimary: '#0A93FCDD'}}}>
+            <KetcherMain/>
+        </ConfigProvider>
+    )
 }
 
-export default App;
+export default App

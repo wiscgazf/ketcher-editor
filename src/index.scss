@@ -1,0 +1,296 @@
+html, body, #root {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+$primary: #0A93FCDD;
+$disabled: #e1e5ea;
+
+/*顶部按钮*/
+.css-x7sio:active {
+  background-color: $primary !important;
+  color: #fff !important;
+}
+
+.css-x7sio:hover {
+  background-color: opacify($primary, 0.8) !important;
+  color: #fff !important;
+
+  svg {
+    color: #fff !important;
+
+    path {
+      fill: #fff !important;
+    }
+  }
+}
+
+.css-x7sio:hover + .MuiButtonBase-root {
+  svg {
+    path {
+      fill: #fff !important;
+    }
+  }
+}
+
+/*左、下、右、按钮*/
+
+.ActionButton-module_button__nfoWQ.ActionButton-module_selected__kPCxA, .ActionButton-module_button__nfoWQ {
+  transition: background-color linear 0.15s;
+}
+
+.ActionButton-module_button__nfoWQ.ActionButton-module_selected__kPCxA, .ActionButton-module_button__nfoWQ:active {
+  background-color: $primary !important;
+  color: #fff !important;
+}
+
+.ActionButton-module_button__nfoWQ.ActionButton-module_selected__kPCxA:hover, .ActionButton-module_button__nfoWQ:active:hover {
+  background-color: opacify($primary, 0.8) !important;
+  color: #fff !important;
+}
+
+.ActionButton-module_button__nfoWQ.ActionButton-module_selected__kPCxA:hover + .ToolbarMultiToolItem-module_icon__-HQal, .ActionButton-module_button__nfoWQ:active:hover + .ToolbarMultiToolItem-module_icon__-HQal {
+  background-color: $primary !important;
+  color: #fff !important;
+}
+
+.ActionButton-module_button__nfoWQ:hover {
+  background-color: opacify($primary, 0.8) !important;
+  color: #fff !important;
+
+  svg {
+    color: #fff;
+  }
+}
+
+.ActionButton-module_button__nfoWQ:hover + .ToolbarMultiToolItem-module_icon__-HQal {
+  path {
+    fill: #fff !important;
+  }
+}
+
+/*打开结构式弹窗*/
+.OpenOptions-module_optionsContainer__-WqT8 {
+  justify-content: center !important;
+
+  .OpenOptions-module_dropContainer__PL6Tg {
+    margin: 10px 20px !important;
+
+    &.FileDrop-module_isDisabled__Ejuyq {
+      display: none !important;
+    }
+
+    .OpenOptions-module_textLabelWrapper__Vx8NF .OpenOptions-module_textLabel__TlOfz {
+      font-size: 12px !important;
+    }
+
+    .OpenOptions-module_buttonLabelWrapper__h2YsI .OpenOptions-module_buttonLabel__LiY-- {
+      font-size: 12px !important;
+    }
+
+    svg {
+      path {
+        &:nth-child(2), &:nth-child(3) {
+          fill: $primary !important;
+        }
+      }
+    }
+  }
+}
+
+.Open-module_copyButton__KlXKd {
+  background-color: $primary !important;
+
+  &:disabled {
+    background-color: $disabled !important;
+  }
+}
+
+.Tabs-module_tabs__PuztJ .Tabs-module_active__eeyNd {
+  background-color: $primary !important;
+}
+
+.Select-module_selectContainer__yXT-t .MuiOutlinedInput-root .MuiSelect-select:hover {
+  border: 1px solid opacify($primary, 0.8) !important;
+}
+
+.Save-module_dialog__of-0M .Save-module_formContainer__v1pIq form .Input-module_genericInput__yT-J9:hover {
+  border: 1px solid opacify($primary, 0.8) !important;
+}
+
+.Save-module_dialog__of-0M .Save-module_ok__SgeCM {
+  background-color: $primary !important;
+
+  &:disabled {
+    background-color: $disabled !important;
+  }
+}
+
+.css-adpdjq-MuiButtonBase-root-MuiButton-root {
+  background-color: $primary !important;
+
+  &:disabled {
+    background-color: $disabled !important;
+  }
+}
+
+.form-module_dataError__IXK1h input[type=number]:focus, .form-module_dataError__IXK1h input[type=number]:hover, .form-module_dataError__IXK1h input[type=search]:focus, .form-module_dataError__IXK1h input[type=search]:hover, .form-module_dataError__IXK1h input[type=text]:focus, .form-module_dataError__IXK1h input[type=text]:hover, .form-module_dataError__IXK1h select:focus, .form-module_dataError__IXK1h select:hover, .form-module_dataError__IXK1h textarea:focus, .form-module_dataError__IXK1h textarea:hover {
+  border: 1px solid #f00 !important;
+}
+
+.Editor-module_editor__o0Gjz input[type=number]:hover, .Editor-module_editor__o0Gjz input[type=text]:hover, .Editor-module_editor__o0Gjz select:hover, .Editor-module_editor__o0Gjz textarea:hover {
+  border: 1px solid opacify($primary, 0.8) !important;
+}
+
+.Select-module_dropdownList__rdcrH .MuiMenuItem-root:hover {
+  border-left-color: opacify($primary, 0.8) !important;
+}
+
+.Select-module_selectContainer__yXT-t .Mui-focused .MuiSelect-select {
+  border-color: $primary !important;
+}
+
+.PasteErrorModalBody-module_shortcut__sED-E {
+  color: $primary !important;
+}
+
+.InfoModal-module_ok__BZ1ar {
+  background-color: $primary !important;
+}
+
+.Dialog-module_body__EWh4H {
+  .MuiButton-colorPrimary:nth-child(2) {
+    background-color: $primary !important;
+    color: #fff !important;
+
+    &:disabled {
+      background-color: $disabled !important;
+      color: rgb(51, 51, 51) !important;
+    }
+  }
+}
+
+.Check-module_dialog_body__wHZMM .Check-module_buttons__cjuqO .Check-module_buttonPrimary__1h5p1 {
+  background-color: $primary !important;
+}
+
+.Dialog-module_withMargin__-zVS4 {
+  & > span {
+    display: none !important;
+  }
+}
+
+.Dialog-module_footer__PliV0 .Dialog-module_ok__BUQ6q {
+  background-color: $primary !important;
+
+  &:disabled {
+    background-color: $disabled !important;
+  }
+}
+
+.Input-module_slider__ws6m0.Input-module_slider__ws6m0 input:checked + span {
+  background-color: $primary !important;
+}
+
+.Settings-module_headerContent__wBYFf .Settings-module_button__VZ2w7:hover {
+  svg {
+    path {
+      fill: opacify($primary, 0.8) !important;
+    }
+  }
+}
+
+.ExtendedTable-module_extendedTable__2-hjV {
+  width: 520px !important;
+}
+
+.GenGroup-module_subGroup__afiEU {
+  & > div {
+    &:first-child {
+      display: flex;
+      justify-content: space-between;
+
+      & > button {
+        padding: 5px !important;
+        margin: 2px !important;
+
+        &.ButtonGenSet-module_selected__XAfYj {
+          background-color: opacify($primary, 0.8) !important;
+          border-color: opacify($primary, 0.8) !important;
+        }
+
+        &:focus {
+          background-color: opacify($primary, 0.8) !important;
+          border-color: opacify($primary, 0.8) !important;
+        }
+
+        &:hover {
+          border-color: opacify($primary, 0.8) !important;
+        }
+      }
+    }
+  }
+}
+
+.PeriodTable-module_elementsTable__Vcz12 {
+  width: 635px !important;
+  height: 450px !important;
+
+  .ElementsTable-module_button__xCaL4 {
+    width: 30px !important;
+    height: 30px !important;
+
+    &.ElementsTable-module_selected__B9LGf {
+      background-color: opacify($primary, 0.8) !important;
+    }
+  }
+}
+
+.RightToolbar-module_buttons__YxRHI button {
+  &.selected, &:active {
+    border-color: opacify($primary, 0.8) !important;
+  }
+}
+
+.template-lib-module_dialog_body__QtL0J .template-lib-module_inputContainer__dxoHA .template-lib-module_searchIcon__o7cAy {
+  path {
+    fill: $primary !important;
+  }
+}
+
+.Editor-module_editor__o0Gjz input[type=search]:hover {
+  border-color: $primary !important;
+}
+
+.template-lib-module_dialog_body__QtL0J .MuiTabs-indicator {
+  background-color: $primary !important;
+}
+
+.emptySearchResult-module_emptySearch__aUSew {
+  svg {
+    path {
+      &:first-child {
+        fill: $primary !important;
+        fill-opacity: 1;
+      }
+
+      &:nth-child(2) {
+        stroke: $primary !important;
+      }
+    }
+  }
+}
+
+.rgroup-module_rgroup__Pm-uA form button.rgroup-module_selected__hP5cM, .rgroup-module_rgroup__Pm-uA form button:active {
+  background-color: $primary !important;
+
+  &:hover {
+    color: #fff !important;
+  }
+}
+
+.rgroup-module_rgroup__Pm-uA form button:hover {
+  color: $primary !important;
+}
