@@ -1,4 +1,4 @@
-import {FC, useState, useRef, useEffect} from 'react'
+import {FC, useState} from 'react'
 // import Rdkit from '@rdkit/rdkit'
 import {Button, Modal, message} from 'antd'
 import {StandaloneStructServiceProvider} from 'ketcher-standalone'
@@ -15,8 +15,6 @@ interface IProps {
 
 const structServiceProvider = new StandaloneStructServiceProvider()
 const KetcherMain: FC<IProps> = () => {
-    // ketcher 实例
-    const [ketcher, setKetcher] = useState<Ketcher | null>(null)
     // MOL 结构的字符串
     const [molStr, setMolStr] = useState<string>('')
     // 预览弹窗
@@ -27,7 +25,6 @@ const KetcherMain: FC<IProps> = () => {
     // init ketch
     const handleOnInit = async (ins: Ketcher) => {
         window.ketcher = ins
-        setKetcher(ins)
         // window.ketcher.editor.subscribe('click', (data) => console.log(data))
     }
 
@@ -38,7 +35,7 @@ const KetcherMain: FC<IProps> = () => {
             return undefined
         }
         try {
-            const res = await ketcher?.getMolfile(molfile)
+            const res = await window.ketcher?.getMolfile(molfile)
             return res
         } catch (e) {
             messageApi.warning('获取MOL失败')
@@ -96,6 +93,10 @@ const KetcherMain: FC<IProps> = () => {
                     }}
                     structServiceProvider={structServiceProvider}
                     onInit={handleOnInit}
+                    togglerComponent={<div>
+                        <Button onClick={preview3d}>3D预览</Button>
+                        <Button onClick={setSetting}>显示所有H</Button>
+                    </div>}
                     buttons={{
                         'settings': {
                             hidden: false,
@@ -108,13 +109,6 @@ const KetcherMain: FC<IProps> = () => {
                         }
                     }}
                 />
-            </div>
-            <div className={styles['preview-body']}>
-                <div className={styles['tool-main']}>
-                    <span>临时操作按钮：</span>
-                    <Button onClick={preview3d}>3D预览</Button>
-                    <Button onClick={setSetting}>显示所有H</Button>
-                </div>
             </div>
             <Modal className={styles['preview-modal']} footer={null} open={previewModal}
                    onCancel={() => setPreviewModal(false)} title={'3D预览'}
