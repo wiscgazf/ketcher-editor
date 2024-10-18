@@ -5,35 +5,8 @@ html, body, #root {
   width: 100%;
 }
 
-$primary: #0A93FCDD;
+$primary: #0a93fc;
 $disabled: #e1e5ea;
-
-/*顶部按钮*/
-.css-x7sio:active {
-  background-color: $primary !important;
-  color: #fff !important;
-}
-
-.css-x7sio:hover {
-  background-color: opacify($primary, 0.8) !important;
-  color: #fff !important;
-
-  svg {
-    color: #fff !important;
-
-    path {
-      fill: #fff !important;
-    }
-  }
-}
-
-.css-x7sio:hover + .MuiButtonBase-root {
-  svg {
-    path {
-      fill: #fff !important;
-    }
-  }
-}
 
 /*左、下、右、按钮*/
 
@@ -294,3 +267,28 @@ $disabled: #e1e5ea;
 .rgroup-module_rgroup__Pm-uA form button:hover {
   color: $primary !important;
 }
+
+.css-emb7eh {
+  border-color: $primary !important;
+
+  &:hover, &:focus, &:active {
+    border-color: opacify($primary, 0.8) !important;
+  }
+}
+
+.Input-module_input__tcHBd[type=checkbox]:hover + .Input-module_checkbox__dth7G {
+  background-image: url("assets/image/icon/check-hover.svg") !important;
+}
+
+.Input-module_input__tcHBd[type=checkbox]:checked + .Input-module_checkbox__dth7G {
+  background-image: url("./assets/image/icon/checked.svg") !important;
+}
+
+.Input-module_input__tcHBd[type=radio]:hover + .Input-module_radioButton__WNnzl {
+  background-image: url("./assets/image/icon/radio-hover.svg") !important;
+}
+
+.Input-module_input__tcHBd[type=radio]:checked + .Input-module_radioButton__WNnzl {
+  background-image: url("./assets/image/icon/radio-active.svg") !important;
+}
+

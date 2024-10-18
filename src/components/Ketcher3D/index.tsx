@@ -1,5 +1,5 @@
 import {FC, useEffect, useRef, useState} from 'react'
-import {Button, Select} from 'antd'
+import {Button, Select, message} from 'antd'
 import styles from './index.module.scss'
 import Miew from 'miew'
 
@@ -60,6 +60,31 @@ const palettes = [
     'JM', 'CP', 'VM'
 ]
 
+
+const requestFullscreen = (element: HTMLElement) => {
+    (element.requestFullscreen && element.requestFullscreen()) ||
+    ((element as any).msRequestFullscreen && (element as any).msRequestFullscreen()) ||
+    ((element as any).mozRequestFullScreen && (element as any).mozRequestFullScreen()) ||
+    ((element as any).webkitRequestFullscreen && (element as any).webkitRequestFullscreen())
+}
+
+const exitFullscreen = () => {
+    (document.exitFullscreen && document.exitFullscreen()) ||
+    ((document as any).msExitFullscreen && (document as any).msExitFullscreen()) ||
+    ((document as any).mozCancelFullScreen && (document as any).mozCancelFullScreen()) ||
+    ((document as any).webkitExitFullscreen && (document as any).webkitExitFullscreen())
+}
+
+// @ts-ignore
+const isFullScreen = () => {
+    return !!(
+        document.fullscreenElement ||
+        (document as any).mozFullScreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).msFullscreenElement
+    )
+}
+
 const Ketcher3D: FC<IProps> = (props) => {
     // 预览 dom ref
     const previewDom = useRef<HTMLDivElement | null>(null)
@@ -71,7 +96,10 @@ const Ketcher3D: FC<IProps> = (props) => {
     const [theme, setTheme] = useState<string>('SF')
     // 调色板
     const [palette, setPalette] = useState<string>('JM')
+    // 全屏
+    const [fullScreenMode, setFullScreenMode] = useState(isFullScreen())
 
+    const [messageApi, contextHolder] = message.useMessage()
 
     useEffect(() => {
         if (!previewDom.current) {
@@ -91,7 +119,10 @@ const Ketcher3D: FC<IProps> = (props) => {
                 resolution: 'high',
                 editing: true,
                 autoRotation: 0,
-                fogFarFactor: 3
+                fogFarFactor: 3,
+                ao: true,
+                aromatic: true,
+                autoResolution: true
             },
         })
         if (window.miew.init()) {
@@ -108,7 +139,11 @@ const Ketcher3D: FC<IProps> = (props) => {
         window.miew.load(previewFile).then(() => {
             window.miew.settings.set('autoRotation', 0.1)
         }).catch((err: any) => {
-            alert('3D预览解析失败，请查看分子式结构是否有误~')
+            messageApi.destroy()
+            messageApi.open({
+                type: 'warning',
+                content: '3D预览解析失败，请查看分子式结构是否有误~'
+            })
         })
     }
 
@@ -143,7 +178,29 @@ const Ketcher3D: FC<IProps> = (props) => {
         window.miew.settings.set('palette', value)
     }
 
+    // 全屏切换
+    const toggleFullscreen = () => {
+        const fullscreenElement: HTMLElement | null =
+            document.querySelector('.' + styles['preview-3d-wrapper'])
+        setFullScreenMode(() => {
+            const isFull = isFullScreen()
+            isFull ? exitFullscreen() : requestFullscreen(fullscreenElement as HTMLElement)
+            return !isFull
+        })
+    }
+
+    // 放大缩小画布
+    const zoomChange = (val: number) => {
+        window.miew.scale(val)
+    }
+
+    // 重置
+    const resetView = () => {
+        preview3D(props.molStr)
+    }
+
     return <div className={styles['preview-3d-wrapper']}>
+        {contextHolder}
         <div className={styles['btm-btns']}>
             <Button type="link" danger>
                 模型
@@ -177,6 +234,18 @@ const Ketcher3D: FC<IProps> = (props) => {
                 onChange={changePalette}
                 options={palettes.map(item => ({label: item, value: item}))}
             />
+            <Button type={'primary'} onClick={toggleFullscreen}>
+                全屏按钮
+            </Button>
+            <Button type={'primary'} onClick={() => zoomChange(1.1)}>
+                +
+            </Button>
+            <Button type={'primary'} onClick={() => zoomChange(0.9)}>
+                -
+            </Button>
+            <Button type={'primary'} onClick={() => resetView()}>
+                重置
+            </Button>
         </div>
         <div className={styles['preview-3d']} ref={previewDom}></div>
     </div>

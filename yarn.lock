@@ -7329,7 +7329,7 @@ ketcher-core@*, ketcher-core@^2.25.0:
 
 ketcher-react@^2.25.0:
   version "2.25.0"
-  resolved "https://registry.npmmirror.com/ketcher-react/-/ketcher-react-2.25.0.tgz"
+  resolved "https://registry.npmmirror.com/ketcher-react/-/ketcher-react-2.25.0.tgz#78f3912f99e79bfa45315fc4ffc01eb0b840cd8c"
   integrity sha512-zQ+MYWGfVJlTZg0iwq/y0H2yUVJdk6Ij5wqNOlEPebJV9YoeBiTLfqUVFil7VZOUE7QepwR0VQ1d1fR32Y+odg==
   dependencies:
     "@babel/runtime" "^7.17.9"

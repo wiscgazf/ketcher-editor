@@ -1,5 +1,6 @@
 const { override, addWebpackPlugin } = require('customize-cra')
 const toobars = require('./config/toolbars')
+const themes = require('./config/themes')
 const fs = require('fs')
 const path = require('path')
 
@@ -29,13 +30,16 @@ class ReplaceInFilePlugin {
                     fileContent = fileContent.replaceAll(search, replace)
                 }
                 fs.writeFileSync(filePath, fileContent, 'utf-8')
+            } else if (file.startsWith('main.') && file.endsWith('.css')) {
+                let fileContent = fs.readFileSync(filePath, 'utf-8')
+                for (let i = 0; i < themes.length; i++) {
+                    const { search, replace } = themes[i]
+                    fileContent = fileContent.replaceAll(search, replace)
+                }
+                fs.writeFileSync(filePath, fileContent, 'utf-8')
             }
         })
     }
 }
 
-module.exports = override(
-    addWebpackPlugin(
-        new ReplaceInFilePlugin()
-    )
-)
+module.exports = override(addWebpackPlugin(new ReplaceInFilePlugin()))

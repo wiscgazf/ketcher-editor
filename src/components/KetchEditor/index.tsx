@@ -1,10 +1,9 @@
 import {FC, useState, useRef, useEffect} from 'react'
-import Rdkit from '@rdkit/rdkit'
-import {Button, Modal} from 'antd'
+// import Rdkit from '@rdkit/rdkit'
+import {Button, Modal, message} from 'antd'
 import {StandaloneStructServiceProvider} from 'ketcher-standalone'
 import {Editor} from 'ketcher-react'
 import type {Ketcher, MolfileFormat} from 'ketcher-core'
-import Miew from 'miew'
 import Ketcher3D from '../Ketcher3D'
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
@@ -23,24 +22,26 @@ const KetcherMain: FC<IProps> = () => {
     // 预览弹窗
     const [previewModal, setPreviewModal] = useState<boolean>(false)
 
+    const [messageApi, contextHolder] = message.useMessage()
+
     // init ketch
     const handleOnInit = async (ins: Ketcher) => {
         window.ketcher = ins
         setKetcher(ins)
-        // window.ketcher.editor.subscribe('change', (data) => console.log(data))
+        // window.ketcher.editor.subscribe('click', (data) => console.log(data))
     }
 
     // 获取getMolfile
     const getMolfile = async (molfile: MolfileFormat = 'v2000') => {
         if (window.ketcher.containsReaction()) {
-            alert('该结构不能保存为*.MOL，由反应箭头表示。')
+            messageApi.warning('该结构不能保存为*.MOL，由反应箭头表示。')
             return undefined
         }
         try {
             const res = await ketcher?.getMolfile(molfile)
             return res
         } catch (e) {
-            console.log('getMolfile', e)
+            messageApi.warning('获取MOL失败')
         }
         return undefined
     }
@@ -50,11 +51,11 @@ const KetcherMain: FC<IProps> = () => {
         // const res = await ketcher?.setMolecule(mol)
         const res: string | undefined = await getMolfile()
         if (res === undefined) {
-            alert('3D预览解析失败，请查看分子式结构是否有误~')
+            messageApi.warning('3D预览解析失败，请查看分子式结构是否有误~')
             return
         }
         if (res === '') {
-            alert('内容为空')
+            messageApi.warning('内容为空')
             return
         }
         setMolStr(res)
@@ -87,6 +88,7 @@ const KetcherMain: FC<IProps> = () => {
 
     return (
         <div className={styles['ketcher-main']}>
+            {contextHolder}
             <div className={styles['ketcher-body']}>
                 <Editor
                     staticResourcesUrl={''}
@@ -114,7 +116,7 @@ const KetcherMain: FC<IProps> = () => {
                     <Button onClick={setSetting}>显示所有H</Button>
                 </div>
             </div>
-            <Modal className={styles['test-a']} footer={null} open={previewModal}
+            <Modal className={styles['preview-modal']} footer={null} open={previewModal}
                    onCancel={() => setPreviewModal(false)} title={'3D预览'}
                    width={'62vw'}>
                 <Ketcher3D molStr={molStr}/>

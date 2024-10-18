@@ -14,10 +14,11 @@
   }
 }
 
-.test-a {
+.preview-modal {
   :global(.ant-modal-content) {
     :global(.ant-modal-body) {
       height: 65vh;
+      overflow-y: hidden;
     }
   }
 }
