@@ -292,3 +292,20 @@ $disabled: #e1e5ea;
   background-image: url("./assets/image/icon/radio-active.svg") !important;
 }
 
+.App-module_top__SBeSV button {
+  &:hover {
+    svg {
+      path {
+        fill: $primary !important;
+      }
+    }
+  }
+
+  &:active {
+    svg {
+      path {
+        fill: #fff !important;
+      }
+    }
+  }
+}

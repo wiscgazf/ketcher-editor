@@ -78,9 +78,10 @@ const KetcherMain: FC<IProps> = () => {
         // window.ketcher.addFragment('C1C=CC=CC=1.C1=CC=CC=C1')
     }
 
-    const setSetting = () => {
-        const params = {showHydrogenLabels: 'all'}
-        window.ketcher.editor.setOptions(JSON.stringify(params))
+    const setSetting = async () => {
+        await window.ketcher.setMolecule('https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/CID/20392/record/SDF?record_type=2d&response_type=display')
+        // const params = {showHydrogenLabels: 'all'}
+        // window.ketcher.editor.setOptions(JSON.stringify(params))
     }
 
     return (
