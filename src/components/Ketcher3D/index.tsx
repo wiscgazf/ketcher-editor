@@ -4,7 +4,7 @@ import styles from './index.module.scss'
 import Miew from 'miew'
 
 interface IProps {
-    molStr: string
+    struct: string
 }
 
 
@@ -18,16 +18,16 @@ const models: IModels[] = [
     {
         title: '球棍模型',
         value: 'BS'
-    },
-    {
-        title: '线模型',
-        value: 'LN'
     }, {
-        title: '棍模型',
+        title: '棒状模型',
         value: 'LC'
     }, {
-        title: '球模型',
+        title: '空间填充模型',
         value: 'VW'
+    },
+    /*{
+        title: '线模型',
+        value: 'LN'
     }, {
         title: 'QS模型',
         value: 'QS'
@@ -40,7 +40,7 @@ const models: IModels[] = [
     }, {
         title: 'CS模型',
         value: 'CS'
-    }
+    }*/
 ]
 
 type ModelsType = typeof models[number]['value'];
@@ -90,15 +90,10 @@ const Ketcher3D: FC<IProps> = (props) => {
     const previewDom = useRef<HTMLDivElement | null>(null)
     // 模型
     const [model, setModel] = useState<ModelsType>('BS')
-    // 颜色
-    const [color, setColor] = useState<string>('EL')
-    // 主题
-    const [theme, setTheme] = useState<string>('SF')
-    // 调色板
-    const [palette, setPalette] = useState<string>('JM')
     // 全屏
     const [fullScreenMode, setFullScreenMode] = useState(isFullScreen())
 
+    const [animateSta, setAnimateSta] = useState<boolean>(false)
     const [messageApi, contextHolder] = message.useMessage()
 
     useEffect(() => {
@@ -106,7 +101,7 @@ const Ketcher3D: FC<IProps> = (props) => {
             return
         }
         if (window.miew) {
-            preview3D(props.molStr)
+            preview3D(props.struct)
             return
         }
         window.miew = new Miew({
@@ -115,6 +110,7 @@ const Ketcher3D: FC<IProps> = (props) => {
             settings: {
                 camDistance: 5,
                 axes: false,
+                fps: false,
                 zooming: true,
                 resolution: 'high',
                 editing: true,
@@ -128,16 +124,16 @@ const Ketcher3D: FC<IProps> = (props) => {
         if (window.miew.init()) {
             window.miew.run()
             setTimeout(() => {
-                preview3D(props.molStr)
+                preview3D(props.struct)
             }, 200)
         }
-    }, [props.molStr])
+    }, [props.struct])
 
     // 预览3d
     const preview3D = (mol: string) => {
         const previewFile: File = stringToFile(mol || '')
         window.miew.load(previewFile).then(() => {
-            window.miew.settings.set('autoRotation', 0.1)
+            console.log('load 3d success~')
         }).catch((err: any) => {
             messageApi.destroy()
             messageApi.open({
@@ -160,34 +156,36 @@ const Ketcher3D: FC<IProps> = (props) => {
         window.miew.rep({mode: value})
     }
 
-    // 切换颜色
-    const changeColors = (value: string) => {
-        setColor(value)
-        window.miew.rep({colorer: value})
-    }
+    /**
+     * TODO 保留一下，方法不好查找
+     // 切换颜色
+     const changeColors = (value: string) => {
+     setColor(value)
+     window.miew.rep({colorer: value})
+     }
 
-    // 切换主题
-    const changeMaterial = (value: string) => {
-        setTheme(value)
-        window.miew.rep({material: value})
-    }
+     // 切换主题
+     const changeMaterial = (value: string) => {
+     setTheme(value)
+     window.miew.rep({material: value})
+     }
 
-    // 切换调色板
-    const changePalette = (value: string) => {
-        setPalette(value)
-        window.miew.settings.set('palette', value)
-    }
+     // 切换调色板
+     const changePalette = (value: string) => {
+     setPalette(value)
+     window.miew.settings.set('palette', value)
+     }*/
 
-    // 全屏切换
+        // 全屏切换
     const toggleFullscreen = () => {
-        const fullscreenElement: HTMLElement | null =
-            document.querySelector('.' + styles['preview-3d-wrapper'])
-        setFullScreenMode(() => {
-            const isFull = isFullScreen()
-            isFull ? exitFullscreen() : requestFullscreen(fullscreenElement as HTMLElement)
-            return !isFull
-        })
-    }
+            const fullscreenElement: HTMLElement | null =
+                document.querySelector('.' + styles['preview-3d-wrapper'])
+            setFullScreenMode(() => {
+                const isFull = isFullScreen()
+                isFull ? exitFullscreen() : requestFullscreen(fullscreenElement as HTMLElement)
+                return !isFull
+            })
+        }
 
     // 放大缩小画布
     const zoomChange = (val: number) => {
@@ -196,58 +194,52 @@ const Ketcher3D: FC<IProps> = (props) => {
 
     // 重置
     const resetView = () => {
-        preview3D(props.molStr)
+        preview3D(props.struct)
+    }
+
+    // 动画change
+    const playChange = () => {
+        setAnimateSta(!animateSta)
+        window.miew.settings.set('autoRotation', animateSta ? 0 : 0.2)
     }
 
     return <div className={styles['preview-3d-wrapper']}>
         {contextHolder}
-        <div className={styles['btm-btns']}>
-            <Button type="link" danger>
-                模型
-            </Button>
-            <Select
-                value={model}
-                onChange={changeModel}
-                options={models.map(item => ({label: item.title, value: item.value}))}
-            />
-            <Button type="link" danger>
-                颜色
-            </Button>
-            <Select
-                value={color}
-                onChange={changeColors}
-                options={colors.map(item => ({label: item, value: item}))}
-            />
-            <Button type="link" danger>
-                主题
-            </Button>
-            <Select
-                value={theme}
-                onChange={changeMaterial}
-                options={themes.map(item => ({label: item, value: item}))}
-            />
-            <Button type="link" danger>
-                调色板
-            </Button>
-            <Select
-                value={palette}
-                onChange={changePalette}
-                options={palettes.map(item => ({label: item, value: item}))}
-            />
-            <Button type={'primary'} onClick={toggleFullscreen}>
-                全屏按钮
-            </Button>
-            <Button type={'primary'} onClick={() => zoomChange(1.1)}>
-                +
-            </Button>
-            <Button type={'primary'} onClick={() => zoomChange(0.9)}>
-                -
-            </Button>
-            <Button type={'primary'} onClick={() => resetView()}>
-                重置
-            </Button>
-        </div>
         <div className={styles['preview-3d']} ref={previewDom}></div>
+        <div>
+            <div className={styles['simple-bottom-bar']}>
+                <div className={styles['bar-left']}>
+                    <div className={styles['mode']}>
+                        {
+                            models.map((item, idx) => {
+                                return <div
+                                    className={`${styles['bar-item']} ${styles[`model${idx + 1}`]} ${item.value === model ? `${styles['active']}` : ''}`}
+                                    key={idx} title={item.title} onClick={() => changeModel(item.value)}>
+                                </div>
+                            })
+                        }
+                    </div>
+                    <div className={`${styles['bar-item']} ${styles['bar-item-h']}`}>
+                    </div>
+                    <div
+                        className={`${styles['bar-item']} ${styles['bar-item-play']} ${animateSta ? `${styles['active']}` : ''}`}
+                        onClick={playChange}>
+                    </div>
+                </div>
+                <div className={styles['bar-right']}>
+                    <div className={`${styles['bar-item']} ${styles['bar-item-full']}`} onClick={toggleFullscreen}>
+                    </div>
+                    <div className={`${styles['bar-item']} ${styles['bar-item-reset']}`} onClick={resetView}>
+                    </div>
+                    <div className={`${styles['bar-item']} ${styles['bar-item-zoom-in']}`}
+                         onClick={() => zoomChange(1.1)}>
+                    </div>
+                    <div className={`${styles['bar-item']} ${styles['bar-item-zoom-out']}`}
+                         onClick={() => zoomChange(0.9)}>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 

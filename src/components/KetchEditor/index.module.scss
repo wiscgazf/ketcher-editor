@@ -1,10 +1,118 @@
-.ketcher-main {
+.ketcher-body {
+  flex: 1;
   position: relative;
-  height: 100%;
-  display: flex;
 
-  .ketcher-body {
-    flex: 1;
+  .simple-bottom-bar {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 10px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .bar-item {
+      border-radius: 4px;
+      background-color: #F8F8F8;
+      border: 1px solid #EEEEEE;
+      margin: 5px;
+      width: 32px;
+      height: 28px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &.model1 {
+        background: #F8F8F8 url("../../assets/image/ketcher/stick-ball.svg") no-repeat center center;
+        background-size: auto;
+
+        &:hover {
+          background: #F8F8F8 url("../../assets/image/ketcher/stick-ball-active.svg") no-repeat center center;
+        }
+      }
+
+      &.model2 {
+        background: #F8F8F8 url("../../assets/image/ketcher/stick-icon.svg") no-repeat center center;
+        background-size: auto;
+
+        &:hover {
+          background: #F8F8F8 url("../../assets/image/ketcher/stick-icon-active.svg") no-repeat center center;
+        }
+      }
+
+      &.model3 {
+        background: #F8F8F8 url("../../assets/image/ketcher/fill-icon.svg") no-repeat center center;
+        background-size: auto;
+
+        &:hover {
+          background: #F8F8F8 url("../../assets/image/ketcher/fill-icon-active.svg") no-repeat center center;
+        }
+      }
+
+      &.bar-item-h {
+        background: #F8F8F8 url("../../assets/image/ketcher/h-icon.svg") no-repeat center center;
+        background-size: auto;
+
+        &:hover {
+          background: #F8F8F8 url("../../assets/image/ketcher/h-icon-active.svg") no-repeat center center;
+        }
+      }
+
+      &.bar-item-play {
+        background: #F8F8F8 url("../../assets/image/ketcher/play.svg") no-repeat center center;
+        background-size: auto;
+      }
+
+      &.bar-item-full {
+        background: #F8F8F8 url("../../assets/image/ketcher/full-icon.svg") no-repeat center center;
+        background-size: auto;
+      }
+
+      &.bar-item-reset {
+        background: #F8F8F8 url("../../assets/image/ketcher/reset.svg") no-repeat center center;
+        background-size: auto;
+      }
+
+      &.bar-item-zoom-in {
+        background: #F8F8F8 url("../../assets/image/ketcher/zoom-in.svg") no-repeat center center;
+        background-size: auto;
+      }
+
+      &.bar-item-zoom-out {
+        background: #F8F8F8 url("../../assets/image/ketcher/zoom-out.svg") no-repeat center center;
+        background-size: auto;
+      }
+    }
+
+    .bar-left {
+      display: flex;
+      align-items: center;
+
+      .mode {
+        border-radius: 4px;
+        background-color: #F8F8F8;
+        border: 1px solid #EEEEEE;
+        height: 28px;
+        padding: 0 2px;
+        margin-right: 5px;
+
+        .bar-item {
+          display: inline-block;
+          border: none;
+          margin: 0;
+        }
+      }
+    }
+
+    .bar-right {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      right: 0;
+    }
   }
 }
 

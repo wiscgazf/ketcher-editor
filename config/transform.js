@@ -6,7 +6,8 @@ module.exports = function (source) {
   window.jbyKetcher={
     store,
     load,
-    getFormatMimeTypeByFileName
+    getFormatMimeTypeByFileName,
+    serverTransform
   };`)
     // 转换
     languages.forEach(({ search, replace }) => {

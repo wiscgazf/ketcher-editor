@@ -309,3 +309,26 @@ $disabled: #e1e5ea;
     }
   }
 }
+
+div[data-testid=ketcher-canvas] {
+  svg {
+    path, rect {
+      &:hover {
+        stroke: $primary !important;
+      }
+    }
+  }
+}
+
+.ketcher-tool-hidden {
+  $targets: "top", "left", "right", "bottom";
+  @each $target in $targets {
+    div[data-testid=#{$target}-toolbar] {
+      display: none !important;
+    }
+  }
+
+  div[role=menu] {
+    display: none !important;
+  }
+}
