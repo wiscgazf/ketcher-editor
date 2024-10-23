@@ -18,7 +18,7 @@ declare global {
         ketcher: Ketcher
         miew: any
         jbyKetcher: IJbyKetcher
-        jbyInitEdit: (options: IOptions) => void
+        defineExports: Function
         initRDKitModule: any
         RDKit: any
     }

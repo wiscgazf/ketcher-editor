@@ -1,17 +1,12 @@
-import {FC, useEffect, useMemo, useState} from 'react'
+import {FC, useMemo, useState} from 'react'
 // import Rdkit from '@rdkit/rdkit'
 import {Button, Modal, message} from 'antd'
 import {StandaloneStructServiceProvider} from 'ketcher-standalone'
 import {Editor, ButtonsConfig} from 'ketcher-react'
 import type {Ketcher, MolfileFormat} from 'ketcher-core'
+import {requestFullscreen, isFullScreen, exitFullscreen} from '../../utils'
 import Ketcher3D from '../Ketcher3D'
-import {
-    bottomToolbarItemVariant, floatingToolItemVariant,
-    leftToolbarItemVariant,
-    rightToolbarItemVariant,
-    topGroup,
-    topToolbarItemVariant
-} from '../../config/toolbar'
+import {rightBar, editLeftBar, IBarItem} from '../../config/customBar'
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
 import styles from './index.module.scss'
@@ -35,6 +30,13 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
     // 放大倍数
     const [zoom, setZoom] = useState<number>(1)
 
+    const [leftBarFlg, setLeftBarFlag] = useState({
+        arom: '',
+        c: false,
+        h: false,
+        allH: false
+    })
+
     // init ketch
     const handleOnInit = async (ins: Ketcher) => {
         window.ketcher = ins
@@ -47,10 +49,10 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
     // 按钮配置
     const buttonConfig = useMemo(() => {
         const obj: ButtonsConfig = {}
-        const hiddenButton = ['miew', 'about', 'help', 'images'];
-        [...leftToolbarItemVariant, ...topToolbarItemVariant, ...topGroup, ...bottomToolbarItemVariant, ...rightToolbarItemVariant, ...floatingToolItemVariant].forEach(value => {
+        const hiddenButton = ['miew', 'about', 'help', 'images']
+        hiddenButton.forEach(value => {
             obj[value] = {
-                hidden: isSimpleEditor ? true : hiddenButton.includes(value)
+                hidden: true
             }
         })
         return obj
@@ -85,7 +87,6 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
         }
         setMolStr(res)
         setPreviewModal(true)
-        // window.ketcher.addFragment(res)
     }
 
     // 添加到画布
@@ -106,10 +107,11 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
         // window.ketcher.addFragment('C1C=CC=CC=1.C1=CC=CC=C1')
     }
 
-    const setSetting = async () => {
-        await window.ketcher.setMolecule('https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/CID/20392/record/SDF?record_type=2d&response_type=display')
-        // const params = {showHydrogenLabels: 'all'}
-        // window.ketcher.editor.setOptions(JSON.stringify(params))
+    const setSetting = async (key: keyof typeof leftBarFlg, setingKey: string) => {
+        const calcVal = leftBarFlg[key] ? false : true
+        const params = {[setingKey]: setingKey == 'showHydrogenLabels' ? calcVal ? 'all' : 'off' : calcVal}
+        window.ketcher.editor.setOptions(JSON.stringify(params))
+        setLeftBarFlag({...leftBarFlg, [key]: calcVal})
     }
 
     // 放大、缩小、重置
@@ -126,14 +128,65 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
         setZoom(num)
     }
 
-    // 芳香化change
-    const aromChange = (val: string) => {
+    // 全屏切换
+    const toggleFullscreen = () => {
+        const fullscreenElement: HTMLElement | null =
+            document.querySelector('.ketcher-stage')
+        try {
+            const isFull = isFullScreen()
+            isFull ? exitFullscreen() : requestFullscreen(fullscreenElement as HTMLElement)
+        } finally {
+            setTimeout(() => {
+                window.ketcher.editor.centerStruct()
+            }, 300)
+        }
+    }
 
+    // 芳香化change
+    const aromChange = (val: string, key: string) => {
+        const {store, serverTransform} = window.jbyKetcher
+        store.dispatch(serverTransform(val))
+        setLeftBarFlag({...leftBarFlg, [key]: key === 'allH' ? !leftBarFlg[key] : val})
+    }
+
+    // 重置
+    const resetView = async () => {
+        setLeftBarFlag({
+            arom: '',
+            c: false,
+            h: false,
+            allH: false
+        })
+        zoomChange(1)
+        await window.ketcher.setMolecule(struct)
+    }
+
+    const actionChange = ({action, val, key = ''}: IBarItem) => {
+        switch (action) {
+            case 'aromChange':
+            case 'toggleAllHydrogens':
+                aromChange(val as string, key)
+                break
+            case 'changeEl':
+                setSetting(key as keyof typeof leftBarFlg, val as string)
+                break
+            case 'toggleFullscreen':
+                toggleFullscreen()
+                break
+            case 'resetView':
+                resetView()
+                break
+            case 'zoomChange':
+                zoomChange(val as number)
+                break
+            default:
+                return ''
+        }
     }
 
     return (
         <>
-            <div key={1} className={`${styles['ketcher-body']} ${isSimpleEditor ? 'ketcher-tool-hidden' : ''}`}>
+            <div className={`${styles['ketcher-body']} ${isSimpleEditor ? 'ketcher-tool-hidden' : ''}`}>
                 {contextHolder}
                 <Editor
                     staticResourcesUrl={''}
@@ -142,47 +195,54 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
                     structServiceProvider={structServiceProvider}
                     onInit={handleOnInit}
                     togglerComponent={<div>
-                        <Button size={'small'} onClick={() => aromChange('aromatize')}>芳香化</Button>
-                        <Button size={'small'} onClick={() => aromChange('dearomatize')}>取消芳香化</Button>
                         <Button size={'small'} onClick={preview3d}>3D</Button>
-                        <Button size={'small'} onClick={setSetting}>显示H</Button>
-                        <Button size={'small'} onClick={() => zoomChange(0.1)}>+</Button>
-                        <Button size={'small'} onClick={() => zoomChange(-0.1)}>-</Button>
-                        <Button size={'small'} onClick={() => zoomChange(1)}>O</Button>
                     </div>}
                     buttons={buttonConfig}
                 />
                 {
                     isSimpleEditor && <div className={styles['simple-bottom-bar']}>
                         <div className={styles['bar-left']}>
-                            <div className={styles['mode']}>
-                                {
-                                    models.map((title, idx) => {
-                                        return <div className={`${styles['bar-item']} ${styles[`model${idx + 1}`]}`}
-                                                    key={idx} title={title}>
+                            {
+                                editLeftBar.map((item, idx) => {
+                                    if (item.group) {
+                                        return <div className={styles['group']} key={idx}>
+                                            {
+                                                item.group.map((dd, idx1) => {
+                                                    return <div key={idx1}
+                                                                className={`${styles['bar-item']} ${styles[`${dd.val === leftBarFlg.arom ? 'active' : ''}`]}`}
+                                                                dangerouslySetInnerHTML={{__html: dd.icon}}
+                                                                onClick={() => actionChange(dd)}
+                                                                title={dd.title}>
+
+                                                    </div>
+                                                })
+                                            }
                                         </div>
-                                    })
-                                }
-                            </div>
-                            <div className={`${styles['bar-item']} ${styles['bar-item-h']}`}>
-                            </div>
-                            <div className={`${styles['bar-item']} ${styles['bar-item-play']}`}>
-                            </div>
+                                    }
+                                    return <div key={idx}
+                                                onClick={() => actionChange(item)}
+                                                className={`${styles['bar-item']} ${styles[`${leftBarFlg[item.key as keyof typeof leftBarFlg] ? 'active' : ''}`]}`}
+                                                dangerouslySetInnerHTML={{__html: item.icon}} title={item.title}>
+
+                                    </div>
+                                })
+                            }
                         </div>
                         <div className={styles['bar-right']}>
-                            <div className={`${styles['bar-item']} ${styles['bar-item-full']}`}>
-                            </div>
-                            <div className={`${styles['bar-item']} ${styles['bar-item-reset']}`}>
-                            </div>
-                            <div className={`${styles['bar-item']} ${styles['bar-item-zoom-in']}`}>
-                            </div>
-                            <div className={`${styles['bar-item']} ${styles['bar-item-zoom-out']}`}>
-                            </div>
+                            {
+                                rightBar.map((item, idx) => {
+                                    return <div key={idx} className={`${styles['bar-item']}`}
+                                                onClick={() => actionChange(item)}
+                                                dangerouslySetInnerHTML={{__html: item.icon}} title={item.title}>
+
+                                    </div>
+                                })
+                            }
                         </div>
                     </div>
                 }
             </div>
-            <Modal key={2} className={styles['preview-modal']} footer={null} open={previewModal}
+            <Modal className={styles['preview-modal']} footer={null} open={previewModal}
                    onCancel={() => setPreviewModal(false)} title={'3D预览'}
                    width={'62vw'}>
                 <Ketcher3D struct={molStr}/>

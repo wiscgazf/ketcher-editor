@@ -312,7 +312,7 @@ $disabled: #e1e5ea;
 
 div[data-testid=ketcher-canvas] {
   svg {
-    path, rect {
+    path, rect, circle {
       &:hover {
         stroke: $primary !important;
       }

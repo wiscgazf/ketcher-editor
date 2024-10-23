@@ -1,97 +1,67 @@
 import {FC, useEffect, useRef, useState} from 'react'
-import {Button, Select, message} from 'antd'
+import {message} from 'antd'
 import styles from './index.module.scss'
+import {requestFullscreen, isFullScreen, exitFullscreen} from '../../utils'
 import Miew from 'miew'
+import {threeDLeftBar, rightBar, IBarItem} from '../../config/customBar'
 
 interface IProps {
     struct: string
 }
 
-
-interface IModels {
-    title: string
-    value: string
-}
-
 // 模型
-const models: IModels[] = [
-    {
-        title: '球棍模型',
-        value: 'BS'
-    }, {
-        title: '棒状模型',
-        value: 'LC'
-    }, {
-        title: '空间填充模型',
-        value: 'VW'
-    },
-    /*{
-        title: '线模型',
-        value: 'LN'
-    }, {
-        title: 'QS模型',
-        value: 'QS'
-    }, {
-        title: 'SA模型',
-        value: 'SA'
-    }, {
-        title: 'SE模型',
-        value: 'SE'
-    }, {
-        title: 'CS模型',
-        value: 'CS'
-    }*/
-]
+/**
+ * const models: IModels[] = [
+ {
+ title: '球棍模型',
+ value: 'BS'
+ }, {
+ title: '棒状模型',
+ value: 'LC'
+ }, {
+ title: '空间填充模型',
+ value: 'VW'
+ },
+ {
+ title: '线模型',
+ value: 'LN'
+ }, {
+ title: 'QS模型',
+ value: 'QS'
+ }, {
+ title: 'SA模型',
+ value: 'SA'
+ }, {
+ title: 'SE模型',
+ value: 'SE'
+ }, {
+ title: 'CS模型',
+ value: 'CS'
+ }
+ ]*/
 
-type ModelsType = typeof models[number]['value'];
+/**
+ * 保留
+ // 颜色
+ const colors: string[] = [
+ 'EL', 'RT', 'SQ', 'CH', 'SS', 'UN', 'CO', 'CF', 'TM', 'OC', 'HY', 'MO', 'CB'
+ ]
 
-// 颜色
-const colors: string[] = [
-    'EL', 'RT', 'SQ', 'CH', 'SS', 'UN', 'CO', 'CF', 'TM', 'OC', 'HY', 'MO', 'CB'
-]
+ // 主题
+ const themes = [
+ 'SF', 'DF', 'PL', 'ME', 'TR', 'GL', 'BA', 'TN', 'FL'
+ ]
 
-// 主题
-const themes = [
-    'SF', 'DF', 'PL', 'ME', 'TR', 'GL', 'BA', 'TN', 'FL'
-]
-
-// 调色板
-const palettes = [
-    'JM', 'CP', 'VM'
-]
-
-
-const requestFullscreen = (element: HTMLElement) => {
-    (element.requestFullscreen && element.requestFullscreen()) ||
-    ((element as any).msRequestFullscreen && (element as any).msRequestFullscreen()) ||
-    ((element as any).mozRequestFullScreen && (element as any).mozRequestFullScreen()) ||
-    ((element as any).webkitRequestFullscreen && (element as any).webkitRequestFullscreen())
-}
-
-const exitFullscreen = () => {
-    (document.exitFullscreen && document.exitFullscreen()) ||
-    ((document as any).msExitFullscreen && (document as any).msExitFullscreen()) ||
-    ((document as any).mozCancelFullScreen && (document as any).mozCancelFullScreen()) ||
-    ((document as any).webkitExitFullscreen && (document as any).webkitExitFullscreen())
-}
-
-// @ts-ignore
-const isFullScreen = () => {
-    return !!(
-        document.fullscreenElement ||
-        (document as any).mozFullScreenElement ||
-        (document as any).webkitFullscreenElement ||
-        (document as any).msFullscreenElement
-    )
-}
+ // 调色板
+ const palettes = [
+ 'JM', 'CP', 'VM'
+ ]*/
 
 const Ketcher3D: FC<IProps> = (props) => {
     // 预览 dom ref
     const previewDom = useRef<HTMLDivElement | null>(null)
     // 模型
-    const [model, setModel] = useState<ModelsType>('BS')
-    // 全屏
-    const [fullScreenMode, setFullScreenMode] = useState(isFullScreen())
+    const [model, setModel] = useState<string>('BS')
 
     const [animateSta, setAnimateSta] = useState<boolean>(false)
     const [messageApi, contextHolder] = message.useMessage()
@@ -151,7 +121,7 @@ const Ketcher3D: FC<IProps> = (props) => {
     }
 
     // 切换模型
-    const changeModel = (value: ModelsType) => {
+    const changeModel = (value: string) => {
         setModel(value)
         window.miew.rep({mode: value})
     }
@@ -180,11 +150,8 @@ const Ketcher3D: FC<IProps> = (props) => {
     const toggleFullscreen = () => {
             const fullscreenElement: HTMLElement | null =
                 document.querySelector('.' + styles['preview-3d-wrapper'])
-            setFullScreenMode(() => {
-                const isFull = isFullScreen()
-                isFull ? exitFullscreen() : requestFullscreen(fullscreenElement as HTMLElement)
-                return !isFull
-            })
+            const isFull = isFullScreen()
+            isFull ? exitFullscreen() : requestFullscreen(fullscreenElement as HTMLElement)
         }
 
     // 放大缩小画布
@@ -194,6 +161,7 @@ const Ketcher3D: FC<IProps> = (props) => {
 
     // 重置
     const resetView = () => {
+        changeModel('BS')
         preview3D(props.struct)
     }
 
@@ -203,40 +171,71 @@ const Ketcher3D: FC<IProps> = (props) => {
         window.miew.settings.set('autoRotation', animateSta ? 0 : 0.2)
     }
 
+    const actionChange = ({val, action = ''}: IBarItem) => {
+        switch (action) {
+            case 'playChange':
+                playChange()
+                break
+            case 'changeModel':
+                changeModel(val as string)
+                break
+            case 'resetView':
+                resetView()
+                break
+            case 'zoomChange':
+                zoomChange(1 + (val as number))
+                break
+            case 'toggleFullscreen':
+                toggleFullscreen()
+                break
+            default:
+                return ''
+        }
+    }
+
     return <div className={styles['preview-3d-wrapper']}>
         {contextHolder}
         <div className={styles['preview-3d']} ref={previewDom}></div>
         <div>
             <div className={styles['simple-bottom-bar']}>
                 <div className={styles['bar-left']}>
-                    <div className={styles['mode']}>
-                        {
-                            models.map((item, idx) => {
-                                return <div
-                                    className={`${styles['bar-item']} ${styles[`model${idx + 1}`]} ${item.value === model ? `${styles['active']}` : ''}`}
-                                    key={idx} title={item.title} onClick={() => changeModel(item.value)}>
+                    {
+                        threeDLeftBar.map((item, idx) => {
+                            if (item.group) {
+                                return <div className={styles['group']} key={idx}>
+                                    {
+                                        item.group.map((dd, idx1) => {
+                                            return <div key={idx1}
+                                                        className={`${styles['bar-item']} ${styles[`${dd.val === model ? 'active' : ''}`]}`}
+                                                        dangerouslySetInnerHTML={{__html: dd.icon}}
+                                                        onClick={() => actionChange(dd)}
+                                                        title={dd.title}>
+
+                                            </div>
+                                        })
+                                    }
                                 </div>
-                            })
-                        }
-                    </div>
-                    <div className={`${styles['bar-item']} ${styles['bar-item-h']}`}>
-                    </div>
-                    <div
-                        className={`${styles['bar-item']} ${styles['bar-item-play']} ${animateSta ? `${styles['active']}` : ''}`}
-                        onClick={playChange}>
-                    </div>
+                            }
+                            return <div key={idx}
+                                        className={`${styles['bar-item']} ${styles[`${item.val === 'animation' && animateSta ? 'active' : ''}`]}`}
+                                        dangerouslySetInnerHTML={{__html: item.icon}} title={item.title}
+                                        onClick={() => actionChange(item)}
+                            >
+
+                            </div>
+                        })
+                    }
                 </div>
                 <div className={styles['bar-right']}>
-                    <div className={`${styles['bar-item']} ${styles['bar-item-full']}`} onClick={toggleFullscreen}>
-                    </div>
-                    <div className={`${styles['bar-item']} ${styles['bar-item-reset']}`} onClick={resetView}>
-                    </div>
-                    <div className={`${styles['bar-item']} ${styles['bar-item-zoom-in']}`}
-                         onClick={() => zoomChange(1.1)}>
-                    </div>
-                    <div className={`${styles['bar-item']} ${styles['bar-item-zoom-out']}`}
-                         onClick={() => zoomChange(0.9)}>
-                    </div>
+                    {
+                        rightBar.map((item, idx) => {
+                            return <div key={idx} className={`${styles['bar-item']}`}
+                                        onClick={() => actionChange(item)}
+                                        dangerouslySetInnerHTML={{__html: item.icon}} title={item.title}>
+
+                            </div>
+                        })
+                    }
                 </div>
             </div>
         </div>

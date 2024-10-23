@@ -13,17 +13,39 @@ const Editor = () => {
 
     // 提供iframe 全局window
     useEffect(() => {
-        window.jbyInitEdit = initEdit
+        window.defineExports = () => {
+            return {
+                initEdit,
+                setEditType,
+                setEditIsSimple,
+                setSdfStruct
+            }
+        }
     }, [])
 
     // 初始化
     const initEdit = (options: IOptions) => {
-        setType(options.type || 'edit')
-        setStruct(options.struct || '')
-        setIsSimpleEditor(options.editMode === 'normal' ? false : true)
+        setEditType(options.type || 'edit')
+        setSdfStruct(options.struct || '')
+        setEditIsSimple(options.editMode === 'normal' ? false : true)
     }
 
-    return <div className={styles['ketcher-main']}>
+    // 设置编辑器类型
+    const setEditType = (val: string) => {
+        setType(val)
+    }
+
+    // 设置是否是简单版编辑器
+    const setEditIsSimple = (val: boolean) => {
+        setIsSimpleEditor(val)
+    }
+
+    // 设置结构
+    const setSdfStruct = (str: string) => {
+        setStruct(str)
+    }
+
+    return <div className={`${styles['ketcher-main']} ketcher-stage`}>
         {
             type === '3d' && <Ketcher3D struct={struct}/>
         }
