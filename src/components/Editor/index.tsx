@@ -61,7 +61,7 @@ const Editor = () => {
             type === 'edit' && <KetchEditor isSimpleEditor={isSimpleEditor} struct={struct}/>
         }
         {
-            isShowStructTab && <div className={styles['tab']}>
+            isShowStructTab && isSimpleEditor && <div className={styles['tab']}>
                 <Segmented<string>
                     options={['3D 结构', '2D 结构']}
                     defaultValue={tabActive}
