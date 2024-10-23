@@ -2,4 +2,18 @@
   position: relative;
   height: 100%;
   display: flex;
+
+  .tab {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+
+    :global(.ant-segmented) {
+      border: 1px solid #0A93FC;
+      background-color: #fff;
+      color: #0A93FC;
+    }
+  }
 }

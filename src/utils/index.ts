@@ -21,3 +21,16 @@ export const isFullScreen = () => {
         (document as any).msFullscreenElement
     )
 }
+
+export function debounce(func: Function, delay = 200) {
+    let timerId: NodeJS.Timeout
+
+    return function (...args: any[]) {
+        clearTimeout(timerId)
+
+        timerId = setTimeout(() => {
+            // @ts-ignore
+            func.apply(this, args)
+        }, delay)
+    }
+}

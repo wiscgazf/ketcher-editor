@@ -1,7 +1,7 @@
 import {FC, useEffect, useRef, useState} from 'react'
 import {message} from 'antd'
 import styles from './index.module.scss'
-import {requestFullscreen, isFullScreen, exitFullscreen} from '../../utils'
+import {requestFullscreen, isFullScreen, exitFullscreen, debounce} from '../../utils'
 import Miew from 'miew'
 import {threeDLeftBar, rightBar, IBarItem} from '../../config/customBar'
 
@@ -74,6 +74,7 @@ const Ketcher3D: FC<IProps> = (props) => {
             preview3D(props.struct)
             return
         }
+
         window.miew = new Miew({
             container: previewDom.current,
             load: '',
@@ -93,15 +94,19 @@ const Ketcher3D: FC<IProps> = (props) => {
         })
         if (window.miew.init()) {
             window.miew.run()
-            setTimeout(() => {
-                preview3D(props.struct)
-            }, 200)
+            preview3D(props.struct)
+        }
+
+        return () => {
+            window.miew && window.miew.unload()
+            window.miew = null
         }
     }, [props.struct])
 
     // 预览3d
-    const preview3D = (mol: string) => {
-        const previewFile: File = stringToFile(mol || '')
+    const preview3D = debounce((sdf: string) => {
+        console.log('wwwwwwww')
+        const previewFile: File = stringToFile(sdf || '')
         window.miew.load(previewFile).then(() => {
             console.log('load 3d success~')
         }).catch((err: any) => {
@@ -111,12 +116,12 @@ const Ketcher3D: FC<IProps> = (props) => {
                 content: '3D预览解析失败，请查看分子式结构是否有误~'
             })
         })
-    }
+    }, 100)
 
     // mol字符串转File
     const stringToFile = (content: string) => {
         const blob = new Blob([content], {type: 'text/plain'})
-        const file = new File([blob], `${Date.now()}.mol`, {type: 'text/plain'})
+        const file = new File([blob], `${Date.now()}.sdf`, {type: 'text/plain'})
         return file
     }
 

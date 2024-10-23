@@ -1,4 +1,4 @@
-import {FC, useMemo, useState} from 'react'
+import {FC, useEffect, useMemo, useState} from 'react'
 // import Rdkit from '@rdkit/rdkit'
 import {Button, Modal, message} from 'antd'
 import {StandaloneStructServiceProvider} from 'ketcher-standalone'
@@ -36,6 +36,21 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
         h: false,
         allH: false
     })
+
+    useEffect(() => {
+        if (struct && window.ketcher) {
+            window.ketcher.setMolecule(struct).catch(() => {
+                messageApi.error('加载化学结构失败')
+            })
+        }
+
+        return () => {
+            if (window.ketcher) {
+                const {editor} = window.ketcher
+                editor?.clear && editor?.clear()
+            }
+        }
+    }, [struct])
 
     // init ketch
     const handleOnInit = async (ins: Ketcher) => {
