@@ -34,4 +34,7 @@ const customThemeLoader = () => {
     })
 }
 
-module.exports = override(translateLoader(), customThemeLoader())
+module.exports = override(translateLoader(), customThemeLoader(), (config) => {
+    config.output.publicPath = process.env.NODE_ENV === 'development' ? '/' : './'
+    return config
+})

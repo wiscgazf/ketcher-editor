@@ -105,7 +105,6 @@ const Ketcher3D: FC<IProps> = (props) => {
 
     // 预览3d
     const preview3D = debounce((sdf: string) => {
-        console.log('wwwwwwww')
         const previewFile: File = stringToFile(sdf || '')
         window.miew.load(previewFile).then(() => {
             console.log('load 3d success~')
@@ -113,7 +112,7 @@ const Ketcher3D: FC<IProps> = (props) => {
             messageApi.destroy()
             messageApi.open({
                 type: 'warning',
-                content: '3D预览解析失败，请查看分子式结构是否有误~'
+                content: sdf ? '3D预览解析失败，请查看分子式结构是否有误~' : '化学结构内容为空~'
             })
         })
     }, 100)

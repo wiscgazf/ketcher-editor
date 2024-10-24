@@ -874,6 +874,15 @@ module.exports = [
         replace: '"enum": [\'Fragment\', \'Multifragment\', \'Bond\', \'Atom\', \'Group\'],"enumNames": [\'片段\', \'多片段\', \'键\', \'原子\', \'组\'],'
     },
     {
+        search: '"enum": [\'Atom\', \'Bond\', \'Fragment\', \'Group\', \'Multifragment\'],',
+        replace: '"enum": [\'Atom\', \'Bond\', \'Fragment\', \'Group\', \'Multifragment\'],"enumNames": [\'原子\', \'键\', \'片段\', \'组\', \'多片段\'],'
+    },
+    { search: 'title: \'Fragment\',', replace: 'title: \'片段\',' },
+    { search: 'title: \'Multifragment\',', replace: 'title: \'多片段\',' },
+    { search: 'title: \'Bond\',', replace: 'title: \'键\',' },
+    { search: 'title: \'Atom\',', replace: 'title: \'原子\',' },
+    { search: 'title: \'Group\',', replace: 'title: \'组\',' },
+    {
         search: '"enum": [\'Absolute\', \'Relative\', \'Attached\'],',
         replace: '"enum": [\'Absolute\', \'Relative\', \'Attached\'],"enumNames": [\'绝对\', \'相对\', \'附属\'],'
     },

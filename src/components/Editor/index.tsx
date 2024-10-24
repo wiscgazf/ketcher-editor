@@ -24,6 +24,13 @@ const Editor = () => {
                 setSdfStruct
             }
         }
+        if (process.env.NODE_ENV === 'development') {
+            initEdit({
+                struct: '',
+                type: 'edit',
+                editMode: 'normal'
+            })
+        }
     }, [])
 
     // 初始化

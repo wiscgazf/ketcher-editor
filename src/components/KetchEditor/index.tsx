@@ -73,14 +73,14 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
         return obj
     }, [isSimpleEditor])
 
-    // 获取getMolfile
-    const getMolfile = async (molfile: MolfileFormat = 'v2000') => {
+    // 获取getSdf
+    const getSdf = async (molfile: MolfileFormat = 'v2000') => {
         if (window.ketcher.containsReaction()) {
-            messageApi.warning('该结构不能保存为*.MOL，由反应箭头表示。')
+            messageApi.warning('该结构不能保存为*.SDF，由反应箭头表示。')
             return undefined
         }
         try {
-            const res = await window.ketcher?.getMolfile(molfile)
+            const res = await window.ketcher?.getSdf(molfile)
             return res
         } catch (e) {
             messageApi.warning('获取MOL失败')
@@ -90,10 +90,8 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
 
     // 预览
     const preview3d = async () => {
-        // const res = await ketcher?.setMolecule(mol)
-        const res: string | undefined = await getMolfile()
+        const res: string | undefined = await getSdf()
         if (res === undefined) {
-            messageApi.warning('3D预览解析失败，请查看分子式结构是否有误~')
             return
         }
         if (res === '') {
