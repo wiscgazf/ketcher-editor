@@ -4,6 +4,7 @@ import KetchEditor from '../KetchEditor'
 import Ketcher3D from '../Ketcher3D'
 import styles from './index.module.scss'
 import {IOptions} from '../../shims-window'
+import {debounce} from '../../utils'
 
 type EditType = '3d' | 'edit'
 
@@ -14,16 +15,7 @@ const Editor = () => {
     const [isShowStructTab, setIsShowStructTab] = useState<boolean>(false)
     const [tabActive, setTabActive] = useState<string>('2D 结构')
 
-    // 提供iframe 全局window
     useEffect(() => {
-        window.defineExports = () => {
-            return {
-                initEdit,
-                setEditType,
-                setEditIsSimple,
-                setSdfStruct
-            }
-        }
         if (process.env.NODE_ENV === 'development') {
             initEdit({
                 struct: '',
@@ -31,10 +23,27 @@ const Editor = () => {
                 editMode: 'normal'
             })
         }
+
+        // 监听父页面数据
+        window.addEventListener('message', (event) => {
+            if (event.origin.includes('localhost:8080') || event.origin.includes('xinjiaoyu')) {
+                if (event.data && event.data.length < 150) {
+                    try {
+                        const res = JSON.parse(event.data)
+                        initEdit(res)
+                    } catch (err) {
+
+                    }
+                }
+            }
+        })
+
+        // 抛出加载成功
+        window.parent.postMessage('loaded', '*')
     }, [])
 
     // 初始化
-    const initEdit = (options: IOptions) => {
+    const initEdit = debounce((options: IOptions) => {
         setEditType(options.type || 'edit')
         setSdfStruct(options.struct || '')
         setEditIsSimple(options.editMode === 'normal' ? false : true)
@@ -43,7 +52,7 @@ const Editor = () => {
             setIsShowStructTab(options.extra.showStructTab)
             setTabActive(threeStruct ? '3D 结构' : '2D 结构')
         }
-    }
+    }, 200)
 
     // 设置编辑器类型
     const setEditType = (val: string) => {

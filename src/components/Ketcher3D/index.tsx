@@ -1,4 +1,4 @@
-import {FC, useEffect, useRef, useState} from 'react'
+import {FC, useEffect, useRef, useState, memo} from 'react'
 import {message} from 'antd'
 import styles from './index.module.scss'
 import {requestFullscreen, isFullScreen, exitFullscreen, debounce} from '../../utils'
@@ -246,4 +246,4 @@ const Ketcher3D: FC<IProps> = (props) => {
     </div>
 }
 
-export default Ketcher3D
+export default memo(Ketcher3D, (prevProps, nextProps) => prevProps.struct === nextProps.struct)

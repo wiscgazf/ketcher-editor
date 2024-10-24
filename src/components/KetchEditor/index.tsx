@@ -1,4 +1,4 @@
-import {FC, useEffect, useMemo, useState} from 'react'
+import {FC, useEffect, useMemo, useState, memo} from 'react'
 // import Rdkit from '@rdkit/rdkit'
 import {Button, Modal, message} from 'antd'
 import {StandaloneStructServiceProvider} from 'ketcher-standalone'
@@ -16,12 +16,10 @@ interface IProps {
     struct: string
 }
 
-const models = ['球棍模型', '棒状模型', '空间填充模型']
-
 const structServiceProvider = new StandaloneStructServiceProvider()
 const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
     // MOL 结构的字符串
-    const [molStr, setMolStr] = useState<string>('')
+    const [sdfStr, setSdfStr] = useState<string>('')
     // 预览弹窗
     const [previewModal, setPreviewModal] = useState<boolean>(false)
 
@@ -98,7 +96,7 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
             messageApi.warning('内容为空')
             return
         }
-        setMolStr(res)
+        setSdfStr(res)
         setPreviewModal(true)
     }
 
@@ -258,10 +256,12 @@ const KetcherMain: FC<IProps> = ({struct = '', isSimpleEditor = true}) => {
             <Modal className={styles['preview-modal']} footer={null} open={previewModal}
                    onCancel={() => setPreviewModal(false)} title={'3D预览'}
                    width={'62vw'}>
-                <Ketcher3D struct={molStr}/>
+                <Ketcher3D struct={sdfStr}/>
             </Modal>
         </>
     )
 }
 
-export default KetcherMain
+export default memo(KetcherMain, (prevProps, nextProps) => {
+    return prevProps.struct === nextProps.struct && prevProps.isSimpleEditor && nextProps.isSimpleEditor
+})
